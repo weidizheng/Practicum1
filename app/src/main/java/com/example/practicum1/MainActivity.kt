@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
 
         updateQuestion()
 
-        // Set up button listeners
         binding.trueButton.setOnClickListener { checkAnswer(true) }
         binding.falseButton.setOnClickListener { checkAnswer(false) }
         binding.nextButton.setOnClickListener { nextQuestion() }
@@ -60,6 +59,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val questionTextResId = quizViewModel.currentQuestionText
         binding.questionTextView.setText(questionTextResId)
+        Log.d(TAG, "Question updated to: ${getString(questionTextResId)}") // Log question updates for debugging
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
@@ -74,23 +74,27 @@ class MainActivity : AppCompatActivity() {
 
         setAnswerButtonsEnabled(false)
 
-        // If it's the last question, show the score
         if (quizViewModel.currentIndex == quizViewModel.questionBankSize - 1) {
             val scorePercentage = (score.toDouble() / quizViewModel.questionBankSize) * 100
             Toast.makeText(this, "Quiz Score: $scorePercentage%", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "Final score: $scorePercentage%") // Log final score
         }
+
+        Log.d(TAG, "Checked answer: $userAnswer, Correct: $correctAnswer") // Log answer check for debugging
     }
 
     private fun nextQuestion() {
         quizViewModel.moveToNext()
         updateQuestion()
         setAnswerButtonsEnabled(true)
+        Log.d(TAG, "Moved to next question, index: ${quizViewModel.currentIndex}") // Log next question
     }
 
     private fun previousQuestion() {
         quizViewModel.moveToPrevious()
         updateQuestion()
         setAnswerButtonsEnabled(true)
+        Log.d(TAG, "Moved to previous question, index: ${quizViewModel.currentIndex}") // Log previous question
     }
 
     private fun setAnswerButtonsEnabled(enabled: Boolean) {

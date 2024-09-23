@@ -14,7 +14,6 @@ class QuizViewModel(private val state: SavedStateHandle) : ViewModel() {
         Question(R.string.question_6, false)
     )
 
-    // Get or save the current index using SavedStateHandle to persist it across process death
     var currentIndex: Int
         get() = state.get<Int>("currentIndex") ?: 0
         set(value) = state.set("currentIndex", value)
@@ -30,11 +29,13 @@ class QuizViewModel(private val state: SavedStateHandle) : ViewModel() {
 
     fun moveToNext() {
         currentIndex = (currentIndex + 1) % questionBank.size
+        state.set("currentIndex", currentIndex) // Save the index to handle process death
     }
 
     fun moveToPrevious() {
         if (currentIndex > 0) {
             currentIndex = (currentIndex - 1) % questionBank.size
+            state.set("currentIndex", currentIndex) // Save the index to handle process death
         }
     }
 }
