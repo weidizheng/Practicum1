@@ -22,34 +22,12 @@ class MainActivity : AppCompatActivity() {
 
         updateQuestion()
 
-        binding.trueButton.setOnClickListener {
-            checkAnswer(true)
-        }
-
-        binding.falseButton.setOnClickListener {
-            checkAnswer(false)
-        }
-
-        binding.nextButton.setOnClickListener {
-            quizViewModel.moveToNext()
-            updateQuestion()
-            binding.trueButton.isEnabled = true
-            binding.falseButton.isEnabled = true
-        }
-
-        binding.previousButton.setOnClickListener {
-            quizViewModel.moveToPrevious()
-            updateQuestion()
-            binding.trueButton.isEnabled = true
-            binding.falseButton.isEnabled = true
-        }
-
-        binding.questionTextView.setOnClickListener {
-            quizViewModel.moveToNext()
-            updateQuestion()
-            binding.trueButton.isEnabled = true
-            binding.falseButton.isEnabled = true
-        }
+        // Set up button listeners
+        binding.trueButton.setOnClickListener { checkAnswer(true) }
+        binding.falseButton.setOnClickListener { checkAnswer(false) }
+        binding.nextButton.setOnClickListener { nextQuestion() }
+        binding.previousButton.setOnClickListener { previousQuestion() }
+        binding.questionTextView.setOnClickListener { nextQuestion() }
 
         Log.d(TAG, "onCreate called")
     }
@@ -94,12 +72,29 @@ class MainActivity : AppCompatActivity() {
         }
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
 
-        binding.trueButton.isEnabled = false
-        binding.falseButton.isEnabled = false
+        setAnswerButtonsEnabled(false)
 
-        if (quizViewModel.currentIndex == questionBank.size - 1) {
-            val scorePercentage = (score.toDouble() / questionBank.size) * 100
+        // If it's the last question, show the score
+        if (quizViewModel.currentIndex == quizViewModel.questionBankSize - 1) {
+            val scorePercentage = (score.toDouble() / quizViewModel.questionBankSize) * 100
             Toast.makeText(this, "Quiz Score: $scorePercentage%", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun nextQuestion() {
+        quizViewModel.moveToNext()
+        updateQuestion()
+        setAnswerButtonsEnabled(true)
+    }
+
+    private fun previousQuestion() {
+        quizViewModel.moveToPrevious()
+        updateQuestion()
+        setAnswerButtonsEnabled(true)
+    }
+
+    private fun setAnswerButtonsEnabled(enabled: Boolean) {
+        binding.trueButton.isEnabled = enabled
+        binding.falseButton.isEnabled = enabled
     }
 }
