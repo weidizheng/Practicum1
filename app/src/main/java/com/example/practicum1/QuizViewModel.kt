@@ -7,9 +7,9 @@ class QuizViewModel(private val state: SavedStateHandle) : ViewModel() {
 
     private val questionBank = listOf(
         Question(R.string.question_1, true),
-        Question(R.string.question_2, true),
+        Question(R.string.question_2, false),
         Question(R.string.question_3, true),
-        Question(R.string.question_4, true),
+        Question(R.string.question_4, false),
         Question(R.string.question_5, true),
         Question(R.string.question_6, false)
     )
@@ -17,6 +17,10 @@ class QuizViewModel(private val state: SavedStateHandle) : ViewModel() {
     var currentIndex: Int
         get() = state.get<Int>("currentIndex") ?: 0
         set(value) = state.set("currentIndex", value)
+
+    var isCheater: Boolean
+        get() = state.get<Boolean>("isCheater") ?: false
+        set(value) = state.set("isCheater", value)
 
     val currentQuestionText: Int
         get() = questionBank[currentIndex].text
@@ -29,13 +33,15 @@ class QuizViewModel(private val state: SavedStateHandle) : ViewModel() {
 
     fun moveToNext() {
         currentIndex = (currentIndex + 1) % questionBank.size
-        state.set("currentIndex", currentIndex) // Save the index to handle process death
     }
 
     fun moveToPrevious() {
         if (currentIndex > 0) {
             currentIndex = (currentIndex - 1) % questionBank.size
-            state.set("currentIndex", currentIndex) // Save the index to handle process death
         }
+    }
+
+    fun setCheaterStatus(cheater: Boolean) {
+        isCheater = cheater
     }
 }

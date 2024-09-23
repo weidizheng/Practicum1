@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Practicum1</string>
-    <string name="question_1">Is the Earth round?</string>
-    <string name="question_2">Summber is cool?</string>
+    <string name="question_1">Is 1 + 1 equal to 2?</string>
+    <string name="question_2">Is 5 an even number?</string>
     <string name="question_3">Does the sun rise in the east?</string>
-    <string name="question_4">Can humans survive without water for a week?</string>
-    <string name="question_5">Is coffee typically served hot?</string>
-    <string name="question_6">Do plants need sunlight to grow?</string>
+    <string name="question_4">Can water burn?</string>
+    <string name="question_5">Are there 7 days in a week?</string>
+    <string name="question_6">Is Mars a moon of Earth?</string>
+    <string name="true_button">True</string>
+    <string name="false_button">False</string>
 </resources>
