@@ -23,10 +23,6 @@ class MainActivity : AppCompatActivity() {
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             isCheater = result.data?.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false) ?: false
-            quizViewModel.setCheaterStatus(isCheater)
-            if (isCheater) {
-                binding.cheatButton.isEnabled = false
-            }
         }
     }
 
@@ -34,6 +30,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        if (savedInstanceState != null) {
+            quizViewModel.currentIndex = savedInstanceState.getInt("currentIndex", 0)
+            score = savedInstanceState.getInt("score", 0)
+            isCheater = savedInstanceState.getBoolean("isCheater", false)
+        }
 
         updateQuestion()
 
@@ -44,24 +47,51 @@ class MainActivity : AppCompatActivity() {
         binding.cheatButton.setOnClickListener { startCheatActivity() }
         binding.questionTextView.setOnClickListener { nextQuestion() }
 
-        if (quizViewModel.isCheater) {
-            binding.cheatButton.isEnabled = false
-        }
-
         Log.d(TAG, "onCreate called")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy called")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("currentIndex", quizViewModel.currentIndex)
+        outState.putInt("score", score)
+        outState.putBoolean("isCheater", isCheater)
     }
 
     private fun updateQuestion() {
         val questionTextResId = quizViewModel.currentQuestionText
         binding.questionTextView.setText(questionTextResId)
         isCheater = false
-        binding.cheatButton.isEnabled = !quizViewModel.isCheater
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = quizViewModel.currentQuestionAnswer
         val message = when {
-            quizViewModel.isCheater -> "Cheating is wrong!"
+            isCheater -> "Cheating is wrong!"
             userAnswer == correctAnswer -> {
                 score++
                 "Correct!"
