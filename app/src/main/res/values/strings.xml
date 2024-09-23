@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Practicum1</string>
+    <string name="question_1">Is the Earth round?</string>
+    <string name="question_2">Is fire cold?</string>
+    <string name="question_3">Does the sun rise in the east?</string>
+    <string name="question_4">Can humans breathe underwater without equipment?</string>
 </resources>
