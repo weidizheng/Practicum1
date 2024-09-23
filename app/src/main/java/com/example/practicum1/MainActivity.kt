@@ -1,33 +1,24 @@
 package com.example.practicum1
-import com.google.android.material.snackbar.Snackbar
+
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.practicum1.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
-    private val questionBank = listOf(
-        Question(R.string.question_1, true),
-        Question(R.string.question_2, false),
-        Question(R.string.question_3, true),
-        Question(R.string.question_4, false)
-    )
-
-    private var currentIndex = 0
-    private var score = 0
     private lateinit var binding: ActivityMainBinding
+    private val quizViewModel: QuizViewModel by viewModels()
+    private var score = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        if (savedInstanceState != null) {
-            currentIndex = savedInstanceState.getInt("currentIndex")
-        }
 
         updateQuestion()
 
@@ -40,21 +31,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.nextButton.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNext()
             updateQuestion()
             binding.trueButton.isEnabled = true
             binding.falseButton.isEnabled = true
         }
 
         binding.previousButton.setOnClickListener {
-            currentIndex = if (currentIndex > 0) currentIndex - 1 else questionBank.size - 1
+            quizViewModel.moveToPrevious()
             updateQuestion()
             binding.trueButton.isEnabled = true
             binding.falseButton.isEnabled = true
         }
 
         binding.questionTextView.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNext()
             updateQuestion()
             binding.trueButton.isEnabled = true
             binding.falseButton.isEnabled = true
@@ -88,18 +79,13 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onDestroy called")
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("currentIndex", currentIndex)
-    }
-
     private fun updateQuestion() {
-        val questionTextResId = questionBank[currentIndex].textResId
+        val questionTextResId = quizViewModel.currentQuestionText
         binding.questionTextView.setText(questionTextResId)
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        val correctAnswer = questionBank[currentIndex].answer
+        val correctAnswer = quizViewModel.currentQuestionAnswer
         val message = if (userAnswer == correctAnswer) {
             score++
             "Correct!"
@@ -111,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         binding.trueButton.isEnabled = false
         binding.falseButton.isEnabled = false
 
-        if (currentIndex == questionBank.size - 1) {
+        if (quizViewModel.currentIndex == questionBank.size - 1) {
             val scorePercentage = (score.toDouble() / questionBank.size) * 100
             Toast.makeText(this, "Quiz Score: $scorePercentage%", Toast.LENGTH_SHORT).show()
         }
